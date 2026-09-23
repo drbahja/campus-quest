@@ -17,19 +17,17 @@ h1{font-family:"Source Serif 4",Georgia,serif;font-weight:600;font-size:clamp(28
 .bar{flex:1;height:10px;background:var(--tint);border-radius:999px;overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--claret);border-radius:999px;transition:width .4s}
 .count{font-weight:700;font-variant-numeric:tabular-nums;min-width:38px;text-align:right}
-.map{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.map svg{display:block;width:100%;height:auto}
-.pin{cursor:pointer}
-.pin circle.halo{fill:var(--claret);opacity:.18}
-.pin circle.dot{fill:var(--claret);stroke:#fff;stroke-width:3}
-.pin text{fill:#fff;font-weight:700;font-size:15px;text-anchor:middle;dominant-baseline:central;pointer-events:none;font-family:"Public Sans",sans-serif}
-.pin.done circle.dot{fill:var(--green)}
-.pin.done circle.halo{fill:var(--green)}
-.pin:focus-visible{outline:none}
-.pin:focus-visible circle.dot{stroke:var(--gold)}
-.lbl{font-family:"Public Sans",sans-serif;font-size:11px;fill:#3a3134;font-weight:600}
-.bld{fill:#E9E1DC;stroke:#CBBFB8;stroke-width:1}
-.bld.cs{fill:#E4B7C9;stroke:#C98AA6}
+.mapwrap{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.zoombar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.zoombar div{display:flex;gap:6px}
+.zoombar button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font-size:20px;line-height:1;color:var(--claret);cursor:pointer}
+.zoombar button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.map{position:relative;overflow:auto;max-height:70vh;-webkit-overflow-scrolling:touch;touch-action:pan-x pan-y pinch-zoom;background:#e9e4df}
+.mapinner{position:relative;width:100%;transform-origin:0 0}
+.mapinner img{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+.pin{position:absolute;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;border:3px solid #fff;background:var(--claret);color:#fff;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 0 0 6px rgba(125,7,68,.18),0 4px 10px rgba(0,0,0,.25);padding:0;font-family:"Public Sans",sans-serif}
+.pin.done{background:var(--green);box-shadow:0 0 0 6px rgba(46,125,79,.2),0 4px 10px rgba(0,0,0,.25)}
+.pin:focus-visible{outline:none;border-color:var(--gold)}
 .hint{margin:12px 0 0;font-size:13px;color:var(--muted)}
 .legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:10px;font-size:12.5px;color:var(--muted)}
 .legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;background:var(--claret);vertical-align:-1px}
@@ -75,46 +73,11 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:20}
 
   <div class="progress" aria-live="polite"><div class="bar"><i id="bar"></i></div><div class="count"><span id="done">0</span>/7</div></div>
 
-  <div class="map" id="map">
-    <svg viewBox="0 0 720 520" role="img" aria-label="Stylised map of the Edgbaston campus with seven locations to unlock">
-      <rect width="720" height="520" fill="#F5F1EE"/>
-      <!-- green heart & lawns -->
-      <ellipse cx="330" cy="290" rx="150" ry="95" fill="#CFE3C7"/>
-      <rect x="40" y="40" width="200" height="110" rx="14" fill="#DCEBD5"/>
-      <rect x="500" y="380" width="190" height="110" rx="14" fill="#DCEBD5"/>
-      <!-- lake -->
-      <ellipse cx="610" cy="120" rx="70" ry="42" fill="#BFD9E8"/>
-      <text x="610" y="124" class="lbl" text-anchor="middle" style="fill:#4a6a7c">Vale lake</text>
-      <!-- paths -->
-      <path d="M0 250 H720" stroke="#EDE7E2" stroke-width="16" fill="none"/>
-      <path d="M330 0 V520" stroke="#EDE7E2" stroke-width="16" fill="none"/>
-      <path d="M120 150 C200 200 260 210 330 250" stroke="#EDE7E2" stroke-width="10" fill="none"/>
-      <path d="M330 250 C420 300 480 340 560 420" stroke="#EDE7E2" stroke-width="10" fill="none"/>
-      <!-- railway -->
-      <path d="M40 500 L700 470" stroke="#8a8a8a" stroke-width="3" stroke-dasharray="10 6" fill="none"/>
-      <text x="60" y="490" class="lbl">University station ▸ city centre 8 min</text>
-      <!-- trees -->
-      <g fill="#A9C99E"><circle cx="70" cy="200" r="10"/><circle cx="95" cy="215" r="8"/><circle cx="640" cy="330" r="10"/><circle cx="662" cy="312" r="8"/><circle cx="250" cy="370" r="9"/><circle cx="470" cy="200" r="9"/></g>
-      <!-- buildings -->
-      <rect x="250" y="120" width="160" height="80" rx="8" class="bld"/><text x="330" y="150" class="lbl" text-anchor="middle">Aston Webb</text><text x="330" y="166" class="lbl" text-anchor="middle" style="fill:#7d0744">Student Hub · IST</text>
-      <rect x="100" y="300" width="130" height="70" rx="8" class="bld cs"/><text x="165" y="330" class="lbl" text-anchor="middle">Computer Science</text><text x="165" y="346" class="lbl" text-anchor="middle">Y9 · Yellow zone</text>
-      <rect x="450" y="120" width="100" height="60" rx="8" class="bld"/><text x="500" y="155" class="lbl" text-anchor="middle">Main Library</text>
-      <rect x="120" y="400" width="140" height="60" rx="8" class="bld"/><text x="190" y="435" class="lbl" text-anchor="middle">Guild of Students</text>
-      <rect x="470" y="290" width="110" height="60" rx="8" class="bld"/><text x="525" y="316" class="lbl" text-anchor="middle">Careers</text><text x="525" y="332" class="lbl" text-anchor="middle">Network</text>
-      <rect x="60" y="60" width="110" height="60" rx="8" class="bld"/><text x="115" y="86" class="lbl" text-anchor="middle">University</text><text x="115" y="102" class="lbl" text-anchor="middle">Medical Practice</text>
-      <!-- Old Joe -->
-      <rect x="322" y="200" width="16" height="70" fill="#B8836E"/><polygon points="318,200 342,200 330,182" fill="#B8836E"/><text x="360" y="230" class="lbl">Old Joe</text>
-      <!-- pins -->
-      <g class="pin" data-id="cs" tabindex="0" role="button" aria-label="Computer Science building"><circle class="halo" cx="165" cy="290" r="22"/><circle class="dot" cx="165" cy="290" r="15"/><text x="165" y="290">1</text></g>
-      <g class="pin" data-id="oldjoe" tabindex="0" role="button" aria-label="Old Joe clock tower"><circle class="halo" cx="330" cy="290" r="22"/><circle class="dot" cx="330" cy="290" r="15"/><text x="330" y="290">2</text></g>
-      <g class="pin" data-id="hub" tabindex="0" role="button" aria-label="Aston Webb Student Hub"><circle class="halo" cx="330" cy="110" r="22"/><circle class="dot" cx="330" cy="110" r="15"/><text x="330" y="110">3</text></g>
-      <g class="pin" data-id="library" tabindex="0" role="button" aria-label="Main Library"><circle class="halo" cx="500" cy="110" r="22"/><circle class="dot" cx="500" cy="110" r="15"/><text x="500" y="110">4</text></g>
-      <g class="pin" data-id="guild" tabindex="0" role="button" aria-label="Guild of Students"><circle class="halo" cx="190" cy="390" r="22"/><circle class="dot" cx="190" cy="390" r="15"/><text x="190" y="390">5</text></g>
-      <g class="pin" data-id="gp" tabindex="0" role="button" aria-label="University Medical Practice"><circle class="halo" cx="115" cy="140" r="22"/><circle class="dot" cx="115" cy="140" r="15"/><text x="115" y="140">6</text></g>
-      <g class="pin" data-id="careers" tabindex="0" role="button" aria-label="Careers Network"><circle class="halo" cx="525" cy="280" r="22"/><circle class="dot" cx="525" cy="280" r="15"/><text x="525" y="280">7</text></g>
-    </svg>
+  <div class="mapwrap">
+    <div class="zoombar"><span>Edgbaston campus map</span><div><button type="button" id="zoomOut" aria-label="Zoom out">−</button><button type="button" id="zoomIn" aria-label="Zoom in">+</button></div></div>
+    <div class="map" id="map"><div class="mapinner" id="mapinner"><img src="map.jpg" alt="Edgbaston campus map" width="1950" height="2410" draggable="false"><button type="button" class="pin" data-id="cs" style="left:42.15%;top:63.9%" aria-label="Computer Science building (Y9)"><span>1</span></button><button type="button" class="pin" data-id="oldjoe" style="left:55.9%;top:65.56%" aria-label="Old Joe clock tower"><span>2</span></button><button type="button" class="pin" data-id="hub" style="left:58.97%;top:70.37%" aria-label="Aston Webb Student Hub (R7)"><span>3</span></button><button type="button" class="pin" data-id="library" style="left:52.31%;top:50.21%" aria-label="Main Library (R30)"><span>4</span></button><button type="button" class="pin" data-id="guild" style="left:76.41%;top:68.88%" aria-label="Guild of Students (O1)"><span>5</span></button><button type="button" class="pin" data-id="gp" style="left:27.18%;top:7.47%" aria-label="University Medical Practice (B9)"><span>6</span></button><button type="button" class="pin" data-id="tlb" style="left:54.56%;top:45.06%" aria-label="Teaching and Learning Building (R32)"><span>7</span></button></div></div>
   </div>
-  <p class="hint">Tap a numbered pin. Get it right and it turns green. Your progress is saved on this phone.</p>
+  <p class="hint">Use + / − or pinch to zoom, drag to move around, then tap a numbered pin. A correct answer turns it green. Progress is saved on this phone.</p>
   <div class="legend" id="legend"></div>
 
   <div class="win" id="win">
@@ -160,7 +123,7 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:20}
     {id:"gp", where:"6 · University Medical Practice", q:"You feel unwell but it is not an emergency. Which number gives free NHS advice?",
      opts:[{t:"111",ok:true},{t:"999"},{t:"101"},{t:"0800 917 9379"}],
      yes:"Correct — 111 for non-emergency health advice (999 is emergencies, 101 is police).", no:"That number is for something else. The NHS non-emergency line is three digits."},
-    {id:"careers", where:"7 · Careers Network", q:"By when must any module change be finished (with approval from both universities)?",
+    {id:"careers", where:"7 · Teaching and Learning Building (R32)", q:"By when must any module change be finished (with approval from both universities)?",
      opts:[{t:"End of week 2 of teaching",ok:true},{t:"End of Welcome Week"},{t:"Any time before the exams"},{t:"End of Semester 1"}],
      yes:"Right — end of week 2, and only with approval from home and from us.", no:"Earlier than that — think of the 'Key dates' slide."}
   ];
@@ -203,10 +166,13 @@ canvas.confetti{position:fixed;inset:0;pointer-events:none;z-index:20}
     Q.forEach(function(x){ var s=document.createElement('span'); s.textContent=x.where; if(state[x.id]) s.className='done'; lg.appendChild(s); });
     document.getElementById('win').classList.toggle('show', n===Q.length);
   }
-  document.querySelectorAll('.pin').forEach(function(p){
-    p.addEventListener('click',function(){open(p.dataset.id)});
-    p.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){e.preventDefault();open(p.dataset.id);} });
-  });
+  document.querySelectorAll('.pin').forEach(function(p){ p.addEventListener('click',function(){open(p.dataset.id)}); });
+  var zoom=1, inner=document.getElementById('mapinner'), mapEl=document.getElementById('map');
+  function setZoom(z){ zoom=Math.max(1,Math.min(3,z)); inner.style.width=(zoom*100)+'%'; }
+  document.getElementById('zoomIn').addEventListener('click',function(){ var cx=mapEl.scrollLeft+mapEl.clientWidth/2, cy=mapEl.scrollTop+mapEl.clientHeight/2, old=zoom; setZoom(zoom+0.6); mapEl.scrollLeft=cx*zoom/old-mapEl.clientWidth/2; mapEl.scrollTop=cy*zoom/old-mapEl.clientHeight/2; });
+  document.getElementById('zoomOut').addEventListener('click',function(){ var cx=mapEl.scrollLeft+mapEl.clientWidth/2, cy=mapEl.scrollTop+mapEl.clientHeight/2, old=zoom; setZoom(zoom-0.6); mapEl.scrollLeft=cx*zoom/old-mapEl.clientWidth/2; mapEl.scrollTop=cy*zoom/old-mapEl.clientHeight/2; });
+  // start zoomed on the centre of campus
+  setZoom(1.6); setTimeout(function(){ mapEl.scrollTop=inner.offsetHeight*0.42; mapEl.scrollLeft=inner.offsetWidth*0.28; },50);
   document.getElementById('closeBtn').addEventListener('click',function(){modal.classList.remove('open')});
   modal.addEventListener('click',function(e){ if(e.target===modal) modal.classList.remove('open'); });
   document.getElementById('resetBtn').addEventListener('click',function(){ state={}; save(); render(); window.scrollTo({top:0,behavior:'smooth'}); });
